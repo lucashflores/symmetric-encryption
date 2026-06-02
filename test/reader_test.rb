@@ -6,11 +6,7 @@ require "stringio"
 class ReaderTest < Minitest::Test
   describe SymmetricEncryption::Reader do
     before do
-      @data = [
-        "Hello World\n",
-        "Keep this secret\n",
-        "And keep going even further and further..."
-      ]
+      @data = 1_000_000.times.map { "#{SecureRandom.hex.encode("US-ASCII")}\n" }
       @data_str = @data.inject("") { |sum, str| sum << str }
       @data_len = @data_str.length
       # Use Cipher 0 since it does not always include a header
@@ -177,7 +173,7 @@ class ReaderTest < Minitest::Test
 
             assert_equal @eof, eof
             if @data_size.positive?
-              assert_equal @data_str, data
+              assert_equal @data_str[0, 4096], data
             else
               assert_nil data
             end
@@ -194,7 +190,7 @@ class ReaderTest < Minitest::Test
 
               assert_equal @eof, eof
               if @data_size.positive?
-                assert_equal @data_str, data
+                assert_equal @data_str[0, 4096], data
                 assert_equal data.object_id, output_buffer.object_id
               else
                 assert_nil data
@@ -230,7 +226,7 @@ class ReaderTest < Minitest::Test
 
             assert_equal @eof, eof
             if @data_size.positive?
-              assert_equal @data_str, data
+              assert_equal @data_str[0, 4096], data
             elsif defined?(JRuby)
               # On JRuby Zlib::GzipReader.new(file) returns '' instead of nil on an empty file
               assert data.blank?
@@ -246,7 +242,7 @@ class ReaderTest < Minitest::Test
                 assert_equal @data[i], line
                 i += 1
               end
-              assert_equal (@data_size.positive? ? 3 : 0), i
+              assert_equal (@data_size.positive? ? @data.size : 0), i
             end
           end
 
@@ -254,7 +250,7 @@ class ReaderTest < Minitest::Test
             SymmetricEncryption::Reader.open(@file_name) do |file|
               i = 0
               i += 1 while file.gets("\n", 128)
-              assert_equal (@data_size.positive? ? 3 : 0), i
+              assert_equal (@data_size.positive? ? @data.size : 0), i
             end
           end
         end

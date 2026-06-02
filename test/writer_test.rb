@@ -1,5 +1,6 @@
 require_relative "test_helper"
 require "stringio"
+require "securerandom"
 
 # Unit Test for Symmetric::EncryptedStream
 #
@@ -39,6 +40,24 @@ class WriterTest < Minitest::Test
               assert size >= @data_len
             end
             assert_equal @data_len, written_len
+          end
+
+          it "encrypt large string to stream" do
+            written_len = 0
+            stream      = StringIO.new
+            SymmetricEncryption::Writer.open(stream) do |file|
+              1_000_000.times do
+                written_len += file.write(SecureRandom.hex)
+              end
+            end
+            size = stream.string.size
+            if compress == false
+              assert 11000, size
+            else
+              # With small files the compressed file is larger
+              assert size >= @data_len
+            end
+            assert_equal 32_000_000, written_len
           end
 
           it "encrypt to file" do
