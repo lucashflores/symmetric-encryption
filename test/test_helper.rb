@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift "#{File.dirname(__FILE__)}/../lib"
 
+require "logger"
 require "yaml"
 require "minitest/autorun"
 require "minitest/stub_any_instance"

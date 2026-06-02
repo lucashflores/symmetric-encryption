@@ -345,20 +345,14 @@ module SymmetricEncryption
     end
 
     # Decrypts the given chunk of data and returns the result
-    if defined?(JRuby)
-      def decrypt(buf)
-        return if buf.nil? || buf.empty?
+    #
+    # Note: Always uses the non-buffered OpenSSL::Cipher#update form. Reusing a
+    # cipher output buffer corrupts data on OpenSSL 3.x, so it is not used here.
+    def decrypt(buf)
+      return if buf.nil? || buf.empty?
 
-        @read_buffer << @stream_cipher.update(buf)
-        @read_buffer << @stream_cipher.final if @ios.eof?
-      end
-    else
-      def decrypt(buf)
-        return if buf.nil? || buf.empty?
-
-        @read_buffer << @stream_cipher.update(buf, @cipher_buffer ||= "".b)
-        @read_buffer << @stream_cipher.final if @ios.eof?
-      end
+      @read_buffer << @stream_cipher.update(buf)
+      @read_buffer << @stream_cipher.final if @ios.eof?
     end
 
     def closed?

@@ -161,26 +161,17 @@ module SymmetricEncryption
     # Write to the IO Stream as encrypted data.
     #
     # Returns [Integer] the number of bytes written.
-    if defined?(JRuby)
-      def write(data)
-        return unless data
+    #
+    # Note: Always uses the non-buffered OpenSSL::Cipher#update form. Reusing a
+    # cipher output buffer corrupts data on OpenSSL 3.x, so it is not used here.
+    def write(data)
+      return unless data
 
-        bytes = data.to_s
-        @size += bytes.size
-        partial = @stream_cipher.update(bytes)
-        @ios.write(partial) unless partial.empty?
-        data.length
-      end
-    else
-      def write(data)
-        return unless data
-
-        bytes = data.to_s
-        @size += bytes.size
-        partial = @stream_cipher.update(bytes, @cipher_buffer ||= "".b)
-        @ios.write(partial) unless partial.empty?
-        data.length
-      end
+      bytes = data.to_s
+      @size += bytes.size
+      partial = @stream_cipher.update(bytes)
+      @ios.write(partial) unless partial.empty?
+      data.length
     end
 
     # Write to the IO Stream as encrypted data.
