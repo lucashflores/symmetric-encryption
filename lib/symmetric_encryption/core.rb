@@ -20,16 +20,13 @@ module SymmetricEncryption
   autoload :Reader,                 "symmetric_encryption/reader"
   autoload :RSAKey,                 "symmetric_encryption/rsa_key"
   autoload :Writer,                 "symmetric_encryption/writer"
-  autoload :CLI,                    "symmetric_encryption/cli"
   autoload :Keystore,               "symmetric_encryption/keystore"
   module ActiveRecord
     autoload :EncryptedAttribute,   "symmetric_encryption/active_record/encrypted_attribute"
   end
 
   module Utils
-    autoload :Aws,                  "symmetric_encryption/utils/aws"
     autoload :Files,                "symmetric_encryption/utils/files"
-    autoload :ReEncryptFiles,       "symmetric_encryption/utils/re_encrypt_files"
   end
 end
 # @formatter:on

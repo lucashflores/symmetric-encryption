@@ -22,10 +22,5 @@ begin
       ActiveRecord::Base.include(SymmetricEncryption::ActiveRecord::AttrEncrypted)
     end
   end
-
-  ActiveSupport.on_load(:mongoid) do
-    require "symmetric_encryption/railties/mongoid_encrypted"
-    require "symmetric_encryption/railties/symmetric_encryption_validator"
-  end
 rescue LoadError
 end
